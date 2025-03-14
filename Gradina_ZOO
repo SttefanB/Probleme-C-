@@ -1,0 +1,131 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+class Pasare{
+  protected:
+  std::string nume;
+  int dimensiune;
+  public:
+  Pasare(std::string nume, int dimensiune):nume(nume),dimensiune(dimensiune){}
+ virtual void afisare()=0;
+ int get_dimensiune(){
+     return this->dimensiune;
+ }
+ virtual float suprafata()=0;
+ std::string get_nume(){
+     return this->nume;
+ }
+int maxi(int a, int b){
+     if(a>b)
+     return a;
+     else 
+     return b;
+ }
+};
+class Zburatoare: public Pasare{
+    private:
+    int batai_pe_minut;
+    public:
+    Zburatoare(std::string nume, int dimensiune, int batai_pe_minut):Pasare(nume,dimensiune),batai_pe_minut(batai_pe_minut){}
+    void afisare(){
+        std::cout<<this->nume<<" "<<this->dimensiune<<" "<<this->batai_pe_minut<<std::endl;
+    }
+    float suprafata(){
+        float suprafata;
+        suprafata=dimensiune*110*(batai_pe_minut/100.00);
+        return suprafata;
+    }
+    
+};
+class Nezburatoare: public Pasare{
+  private:
+  std::string culoare;
+  public:
+  Nezburatoare(std::string nume, int dimensiune, std::string culoare):Pasare(nume,dimensiune),culoare(culoare){}
+  void afisare(){
+      std::cout<<this->nume<<" "<<this->dimensiune<<" "<<this->culoare<<std::endl;
+  }
+  float suprafata(){
+      float suprafata;
+      suprafata=dimensiune*30;
+      return suprafata;
+  }
+  
+};
+bool comparatie(Pasare* p1, Pasare* p2){
+    return p1->suprafata()<p2->suprafata();
+}
+int main()
+{
+    std::string tip,nume, culoare;
+    int n,dimensiune,nr_batai,comanda;
+    std::vector <Pasare*> pasari;
+    std:: vector<std::string> c;
+    std::cin>>n;
+    for(int i=0;i<n;++i){
+        std::cin>>tip;
+        std::cin>>nume;
+        std::cin>>dimensiune;
+        c.push_back(tip);
+        if(tip=="z")
+        {
+            std::cin>>nr_batai;
+            pasari.push_back(new Zburatoare(nume,dimensiune,nr_batai));
+        }
+        if(tip=="n"){
+            std::cin>>culoare;
+            pasari.push_back(new Nezburatoare(nume,dimensiune,culoare));
+        }
+    }
+    std::cin>>comanda;
+    switch(comanda){
+        case 1:
+        {
+            for(int i=0;i<pasari.size();++i)
+            pasari[i]->afisare();
+            break;
+        }
+        case 2:
+        {
+            std::string a;
+            int dimensiune_1;
+            std::cin>>a;
+            std::cin>>dimensiune_1;
+            for(int i=0;i<pasari.size();++i)
+                if(c[i]==a && pasari[i]->get_dimensiune()>dimensiune_1)
+                pasari[i]->afisare();
+            
+            break;
+        }
+        case 3:
+        {
+            for(int i=0;i<pasari.size();++i)
+            std::cout<<pasari[i]->get_nume()<<" "<<pasari[i]->suprafata()<<std::endl;
+            break;
+        }
+        case 4:
+        {
+            std::sort(pasari.begin(),pasari.end(),comparatie);
+            for(int i=0;i<pasari.size();++i)
+            pasari[i]->afisare();
+            break;
+        }
+        case 5:
+        {
+            float s1=0,s2=0;
+            for(int i=0;i<pasari.size();++i){
+                if(c[i]=="z")
+                s1=s1+pasari[i]->suprafata();
+                else if(c[i]=="n")
+                s2=s2+pasari[i]->suprafata();
+            }
+            if(s1>s2)
+            std::cout<<s1<<std::endl;
+            else
+            std::cout<<s2<<std::endl;
+            break;
+        }
+    }
+    return 0;
+}
