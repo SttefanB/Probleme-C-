@@ -1,0 +1,140 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <math.h>
+#include <algorithm>
+class Jucarie{
+  protected:
+  std::string tematica;
+  std::string nume;
+  int varsta;
+  public:
+  virtual void afisare()=0;
+  Jucarie(std::string tematica, std::string nume):tematica(tematica),nume(nume),varsta(0){}
+  std::string getter_tematica(){
+      return this->tematica;
+  }
+  std::string getter_nume(){
+      return this->nume;
+  }
+ virtual float varsta_minima()=0;
+ 
+ void set_varsta_minima(int varsta){
+     this->varsta=varsta;
+ }
+ int get_varsta_minima(){ 
+     return this->varsta; 
+ }
+};
+class Action_figure: public Jucarie{
+  private:
+  int inaltime, latime, lungime;
+  public:
+  Action_figure(std::string tematica, std::string nume, int inaltime, int latime, int lungime):Jucarie(tematica,nume),inaltime(inaltime),latime(latime),lungime(lungime){}
+  std::vector <Action_figure*> jucarii_actiune;
+  void adaugare(Action_figure* a_entity){
+      jucarii_actiune.push_back(a_entity);
+  }
+  void afisare(){
+      std::cout<<"Action_figure "<<this->tematica<<" "<<this->nume<<" "<<this->inaltime<<" "<<this->latime<<" "<<this->lungime<<std::endl;
+  }
+  float varsta_minima(){
+      int min=inaltime;
+      float varsta;
+      if(min>latime)
+      min=latime;
+      if(min>lungime)
+      min=lungime;
+      varsta=10/min;
+      return floor(varsta);
+  }
+};
+class Puzzle: public Jucarie{
+  private:
+  int nr_piese, latime, lungime;
+  public:
+  Puzzle(std::string tematica, std::string nume, int nr_piese, int latime, int lungime):Jucarie(tematica,nume),nr_piese(nr_piese),latime(latime),lungime(lungime){}
+  std::vector <Puzzle*> jucarii_puzzle;
+  void adaugare_puzzle(Puzzle* p_entity){
+      jucarii_puzzle.push_back(p_entity);
+  }
+  void afisare(){
+      std::cout<<"Puzzle "<<this->tematica<<" "<<this->nume<<" "<<this->nr_piese<<" "<<this->latime<<" "<<this->lungime<<std::endl;
+  }
+  float varsta_minima(){
+      float latime_p,lungime_p,varsta,min;
+      latime_p=latime/sqrt(nr_piese);
+      lungime_p=lungime/sqrt(nr_piese);
+      if(latime_p<lungime_p)
+      min=latime_p;
+      else if(latime_p>lungime_p)
+      min=lungime_p;
+      varsta=10/min;
+      return floor(varsta);
+  }
+
+};
+bool comparatie(Jucarie* j1,Jucarie* j2){
+      return j1->get_varsta_minima()<j2->get_varsta_minima();
+}
+int main()
+{
+    std::string tip_jucarie,tematica_jucarie,nume_jucarie,tematica;
+    int inaltime_action,latime_action,lungime_action,n;
+    int nr_piese, latime_puzzle, lungime_puzzle;
+    int comanda;
+    std::vector <Jucarie*> jucarii;
+    std::vector <std::string> a;
+    std::cin>>n;
+    for(int i=0;i<n;++i){
+        std::cin>>tip_jucarie;
+        std::cin>>tematica_jucarie;
+        std::cin>>nume_jucarie;
+        a.push_back(tip_jucarie);
+        if(tip_jucarie=="a")
+        {
+            std::cin>>inaltime_action;
+            std::cin>>latime_action;
+            std::cin>>lungime_action;
+            jucarii.push_back(new Action_figure(tematica_jucarie,nume_jucarie, inaltime_action, latime_action, lungime_action));
+        }
+        if(tip_jucarie=="p")
+        {
+            std::cin>>nr_piese;
+            std::cin>>latime_puzzle;
+            std::cin>>lungime_puzzle;
+            jucarii.push_back(new Puzzle(tematica_jucarie,nume_jucarie,nr_piese,latime_puzzle,lungime_puzzle));
+        }
+    }
+        std::cin>>comanda;
+        if(comanda==1)
+        {
+            for(int i=0;i<jucarii.size();++i)
+            jucarii[i]->afisare();
+        }
+        else if(comanda==2)
+        {
+            std::cin>>tematica;
+            for(int i=0;i<jucarii.size();++i)
+            if(jucarii[i]->getter_tematica()==tematica)
+            jucarii[i]->afisare();
+        }
+        else if(comanda==3)
+        {
+            for(int i=0;i<jucarii.size();++i){
+                if(a[i]=="a")
+                std::cout<<"Action_figure "<<jucarii[i]->getter_nume()<<" "<<jucarii[i]->varsta_minima()<<std::endl;
+                else if(a[i]=="p")
+                std::cout<<"Puzzle "<<jucarii[i]->getter_nume()<<" "<<jucarii[i]->varsta_minima()<<std::endl;
+            }
+        }
+        else if(comanda==4){
+            for(int i=0;i<jucarii.size();++i)
+            jucarii[i]->set_varsta_minima(jucarii[i]->varsta_minima());
+            std::sort(jucarii.begin(),jucarii.end(),comparatie);
+            for(int i=0;i<jucarii.size();++i)
+            jucarii[i]->afisare();
+        }
+    
+return 0;    
+}
