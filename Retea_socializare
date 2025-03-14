@@ -1,0 +1,148 @@
+#include <iostream>
+#include <iomanip>
+#include <string>
+class Profil{
+    private:
+    std::string nume_utilizator;
+    int an,luna,zi,ID;
+    public:
+    Profil( int ID,std::string nume_utilizator,int an,int luna,int zi):ID(ID),nume_utilizator(nume_utilizator),an(an),luna(luna),zi(zi){}
+    std::string getter_nume_utilizator(){
+        return this->nume_utilizator;
+    }
+    int getter_an(){
+        return this->an;
+    }
+    int getter_luna(){
+        return this->luna;
+    }
+    int getter_zi(){
+        return this->zi;
+    }
+    int getter_ID(){
+        return this->ID;
+    }
+    void afisare(){
+        std::cout<<this->ID<<std::endl;
+        std::cout<<this->nume_utilizator<<std::endl;
+        std::cout<<this->an<<" "<<this->luna<<" "<<this->zi<<std::endl;
+    }
+    void afisare1(){
+        std::cout<<this->ID<<std::endl;
+        std::cout<<this->an<<" "<<this->luna<<" "<<this->zi<<std::endl;
+    }
+        void afisare2(){
+            std::cout<<this->ID<<std::endl;
+            std::cout<<"EROARE: Data de nastere introdusa nu e valida"<<std::endl;
+        }
+    int calculul_varstei(int anul,int lunal, int ziua){
+        int varsta;
+        if(this->an<anul){
+            if(this->luna==lunal){
+                if(this->zi==ziua)
+            varsta=anul-this->an;
+            else if(this->zi>ziua)
+            varsta=anul-this->an-1;
+            else if(this->zi<ziua)
+            varsta=anul-this->an;
+            
+            }
+            else if(this->luna>lunal)
+            varsta=anul-this->an-1;
+            else if(this->luna<lunal)
+            varsta=anul-this->an;
+        }
+    return varsta;
+    }
+};
+class Website{
+    private:
+    int numar_utilizatori,ID;
+    Profil** utilizatori;
+    public:
+    Website(int numar_utilizatori):numar_utilizatori(numar_utilizatori){
+        utilizatori=new Profil*[numar_utilizatori];
+    }
+    void adaugare(Profil c,int index){
+        *(this->utilizatori+index)= new Profil(c);
+    }
+    void afisari(){
+        for(int i=0;i<this->numar_utilizatori;++i){
+            (*(this->utilizatori+i))->afisare();
+        }
+    }
+    void verificare_data_nastere(){
+        int ok=1;
+        for(int i=0;i<this->numar_utilizatori;++i){
+            if( (*(this->utilizatori+i))->getter_an()<1900 || (*(this->utilizatori+i))->getter_an()>2021) 
+            ok=0;
+            if( (*(this->utilizatori+i))->getter_luna()<1 || (*(this->utilizatori+i))->getter_luna()>12) 
+            ok=0;
+            if( (*(this->utilizatori+i))->getter_zi()<1 || (*(this->utilizatori+i))->getter_zi()>30 )
+            ok=0;
+            if(ok==1)
+        (*(this->utilizatori+i))->afisare1();
+        else if(ok==0)
+        (*(this->utilizatori+i))->afisare2();
+        }
+        
+    }
+    void verificare_varsta(int an1,int luna1,int zi1){
+        for(int i=0;i<this->numar_utilizatori;++i){
+            if((*(utilizatori+i))->calculul_varstei(an1,luna1,zi1)>=18){
+            std::cout<<(*(utilizatori+i))->getter_nume_utilizator()<<std::endl;
+            std::cout<<(*(utilizatori+i))->calculul_varstei(an1,luna1,zi1)<<std::endl;
+        }
+        }
+    }
+};
+class Post{
+    private:
+    int numar_postari,superior_varsta,inferior_varsta;
+    std::string postare;
+    Profil **utilizatori;
+    public:
+    Post(int numar_postari,std::string postare,int superior_varsta,int inferior_varsta):numar_postari(numar_postari),postare(postare),superior_varsta(superior_varsta),inferior_varsta(inferior_varsta){}
+    
+    }
+};
+int main(){
+    int an,luna,zi,numar_utilizatori;
+    std::string nume_utilizator;
+    std::cin>>numar_utilizatori;
+    Website Site(numar_utilizatori);
+    for(int i=0;i<numar_utilizatori;++i){
+        std::cin.ignore();
+        std::getline(std::cin,nume_utilizator);
+        std::cin>>an;
+        std::cin>>luna;
+        std::cin>>zi;
+        Profil cont=Profil(i,nume_utilizator,an,luna,zi);
+        Site.adaugare(cont,i);
+    }
+    int comanda;
+    std::cin>>comanda;
+    if(comanda==1)
+        Site.afisari();
+    if(comanda==2)
+    Site.verificare_data_nastere();
+    if(comanda==3){
+        int an1,luna1,zi1;
+        std::cin>>an1>>luna1>>zi1;
+        Site.verificare_varsta(an1,luna1,zi1);
+    }
+    if(comanda==4){
+        int ziua_curenta,luna_curenta,an_curent,numar_postari,ID_utilizator,superior_varsta,inferior_varsta;
+        std::string postare;
+        std::cin>>numar_postari;
+        std::cin>>an_curent>>luna_curenta>>ziua_curenta;
+        for(int i=0;i<numar_postari;++i){
+            std::cin>>inferior_varsta;
+            std::cin>>superior_varsta;
+            std::cin.ignore();
+            std::getline(std::cin,postare);
+        }
+        
+    }
+    return 0;
+}
